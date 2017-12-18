@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+		<beans xmlns="http://www.springframework.org/schema/beans"
+			xmlns:tx="http://www.springframework.org/schema/tx"
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		    xmlns:p="http://www.springframework.org/schema/p"
+		    xmlns:context="http://www.springframework.org/schema/context"
+		    xmlns:mvc="http://www.springframework.org/schema/mvc"
+		    xsi:schemaLocation="
+			http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/mvc
+			http://www.springframework.org/schema/mvc/spring-mvc.xsd
+			http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context.xsd
+			http://www.springframework.org/schema/tx
+			http://www.springframework.org/schema/tx/spring-tx.xsd">
+			<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+				<property name="locations" value="classpath:db-config.properties"></property>
+			</bean>
+			<bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+				<property name="driverClassName" value="${diver}"></property>
+				<property name="url" value="${url}"></property>
+				<property name="username" value="${username}"></property>
+				<property name="password" value="${password}"></property>
+				<property name="maxActive" value="${maxTotal}"></property>
+			</bean>
+			<!-- 在这几个包里的类都给spring管理 -->
+			<context:component-scan base-package="com.action.Impl , com.service.Impl , com.dao.Impl"></context:component-scan>
+			<bean name="factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+				<property name="dataSource" ref="dataSource"></property>
+				<property name="configLocation" value="classpath:configuration.xml"></property>
+			</bean>
+			<!-- 声明一个事务管理者 -->
+			<bean name="manager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+				<property name="dataSource" ref="dataSource"></property>
+			</bean>
+			<!-- 通过注解来声明事物的策略 -->
+			<tx:annotation-driven transaction-manager="manager" />
+			
+			
+		</beans>
